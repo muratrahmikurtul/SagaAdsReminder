@@ -11,9 +11,9 @@ app.listen(process.env.PORT || 8080, () => {
     console.log('Server is starting');
 });
 
-app.route('/', (req,res) => {
-    res.send("This app creating for Leyla Kurtul")
-})
+app.get('/', function (req, res) {
+    res.send('This app creating for Leyla KURTUL')
+  })
 
 
 cron.schedule('0 */30 * * * *',() => {
