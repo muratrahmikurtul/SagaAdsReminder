@@ -6,6 +6,10 @@ const nodemailer = require("nodemailer");
 const hbs = require('nodemailer-express-handlebars');
 require('dotenv').config();
 const app = express();
+
+app.use(express.static(__dirname + '/public'));
+
+
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const myOAuth2Client = new OAuth2(
@@ -23,10 +27,10 @@ app.listen(process.env.PORT || 8080, () => {
     console.log('Server is starting');
 });
 
-app.get('/', function (req, res) {
-    res.send('This app creating for Leyla KURTUL')
-});
 
+let mailList = [];
+
+mailList = ['leylakapi@gmail.com','muratrahmikurtul@gmail.com'];
 
 //cron.schedule('0 */30 * * * *',() => {
     (async () => {
@@ -69,9 +73,11 @@ app.get('/', function (req, res) {
             viewPath: './views'
         }));
         
+        
+
         let mailOptions = {
             from: 'saga-habercisi@gmail.com',
-            to: 'leylakapi@gmail.com, muratrahmikurtul@gmail.com', 
+            to: mailList.toString(), 
             subject: 'Saga Evler',
             template: 'index',
             context: {
