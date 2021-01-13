@@ -40,8 +40,16 @@ app.post('/', (req,res) =>{
         res.send("Please write an email");
         return
     }
-    mailList.push(req.body.email);
-    res.send('Thanks for subscribing you will get mail every 30 mins.');
+    var str = req.body.email;
+    var index = mailList.indexOf(str);
+    if(index == -1){
+        mailList.push(str);
+        res.send('Thanks for subscribing you will get mail every 30 mins.');
+    }
+    else{
+        res.send("This email has already subscribed");
+    }
+    
 });
 
 
