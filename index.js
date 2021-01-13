@@ -13,10 +13,10 @@ app.listen(process.env.PORT || 8080, () => {
 
 app.get('/', function (req, res) {
     res.send('This app creating for Leyla KURTUL')
-  })
+});
 
 
-cron.schedule('0 */30 * * * *',() => {
+//cron.schedule('0 */30 * * * *',() => {
     (async () => {
         let sagaData = []
         const response = await request({
@@ -41,7 +41,9 @@ cron.schedule('0 */30 * * * *',() => {
         }
 
         let transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.EMAIL,
                 pass: process.env.PASSWORD
@@ -56,7 +58,7 @@ cron.schedule('0 */30 * * * *',() => {
         
         let mailOptions = {
             from: 'saga-habercisi@gmail.com',
-            to: 'leylakapi@gmail.com', 
+            to: 'leylakapi@gmail.com, muratrahmikurtul@gmail.com', 
             subject: 'Saga Evler',
             template: 'index',
             context: {
@@ -72,6 +74,6 @@ cron.schedule('0 */30 * * * *',() => {
     }
     
     )();
-});
+//});
 
 
