@@ -6,6 +6,18 @@ const nodemailer = require("nodemailer");
 const hbs = require('nodemailer-express-handlebars');
 require('dotenv').config();
 const app = express();
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+const myOAuth2Client = new OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    "https://developers.google.com/oauthplayground"
+    )
+
+myOAuth2Client.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN
+});
+const myAccessToken = myOAuth2Client.getAccessToken()
 
 app.listen(process.env.PORT || 8080, () => {
     console.log('Server is starting');
@@ -41,14 +53,15 @@ app.get('/', function (req, res) {
         }
 
         let transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
+            service: "gmail",
             auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
-            }
-        });
+                 type: "OAuth2",
+                 user: process.env.EMAIL, //your gmail account you used to set the project up in google cloud console"
+                 clientId: process.env.CLIENT_ID,
+                 clientSecret: process.env.CLIENT_SECRET,
+                 refreshToken: process.env.REFRESH_TOKEN,
+                 accessToken: myAccessToken //access token variable we defined earlier
+                }});
         
         
         transporter.use('compile', hbs({
