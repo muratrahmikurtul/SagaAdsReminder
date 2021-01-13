@@ -6,7 +6,12 @@ const nodemailer = require("nodemailer");
 const hbs = require('nodemailer-express-handlebars');
 require('dotenv').config();
 const app = express();
+const bodyParser = require('body-parser')
+const path = require('path');
 
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 
@@ -30,9 +35,37 @@ app.listen(process.env.PORT || 8080, () => {
 
 let mailList = [];
 
-mailList = ['leylakapi@gmail.com','muratrahmikurtul@gmail.com'];
+app.post('/', (req,res) =>{
+    if (req.body.email == null || req.body.email == ''){
+        res.send("Please write an email");
+        return
+    }
+    mailList.push(req.body.email);
+    res.send('Thanks for subscribing you will get mail every 30 mins.');
+});
 
-//cron.schedule('0 */30 * * * *',() => {
+
+app.get('/unsubscribe', (req,res) => {
+    res.sendFile(path.join(__dirname+'/public/unsubscribe.html'));
+})
+
+app.post('/unsubscribe', (req, res) =>{
+    if (req.body.email == null || req.body.email == ''){
+        res.send("Please write an email");
+        return
+    }
+    var str = req.body.email;
+    var index = mailList.indexOf(str);
+    if(index != -1){
+        mailList.pop(mailList[index]);
+        res.send("Unsubscribing is successful");
+    }
+    else{
+        res.send("This email has already unsubscribed");
+    }
+});
+
+cron.schedule('* */30 * * * *',() => {
     (async () => {
         let sagaData = []
         const response = await request({
@@ -93,6 +126,5 @@ mailList = ['leylakapi@gmail.com','muratrahmikurtul@gmail.com'];
     }
     
     )();
-//});
-
+});
 
